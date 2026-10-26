@@ -28,6 +28,7 @@ const feedbackElement = document.getElementById('feedback');
 const moveButtons = [...document.querySelectorAll('[data-move]')];
 let game;
 let timerInterval;
+let leaderboardMusicEnabled = true;
 
 function playEffect(effectId) {
   const effect = document.getElementById(effectId);
@@ -71,6 +72,7 @@ function playScreenMusic(id, loop = false) {
 }
 
 function startLeaderboardMusic() {
+  if (!leaderboardMusicEnabled) return;
   playScreenMusic('leaderboard-music', true);
 }
 
@@ -531,6 +533,19 @@ document.getElementById('quit-game').addEventListener('click', () => {
   startLeaderboardMusic();
 });
 moveButtons.forEach(button => button.addEventListener('click', () => placePipe(button.dataset.move)));
+document.getElementById('toggle-music').addEventListener('click', () => {
+  leaderboardMusicEnabled = !leaderboardMusicEnabled;
+  const button = document.getElementById('toggle-music');
+  button.textContent = leaderboardMusicEnabled ? 'Music: on' : 'Music: off';
+  button.setAttribute('aria-pressed', String(leaderboardMusicEnabled));
+  if (leaderboardMusicEnabled) startLeaderboardMusic();
+  else stopGameMusic();
+});
+document.addEventListener('pointerdown', () => {
+  if (leaderboardMusicEnabled && !gameScreen.hidden) return;
+  const leaderboard = document.getElementById('leaderboard-music');
+  if (leaderboardMusicEnabled && leaderboard.paused && !startScreen.hidden) startLeaderboardMusic();
+}, { once: true });
 renderLeaderboard('standard');
 renderLeaderboard('challenge');
 startLeaderboardMusic();
