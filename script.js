@@ -6,6 +6,14 @@ const POINTS_PER_OBSTACLE_HIT = 10;
 const NORMAL_SECONDS = 90;
 const CHALLENGE_SECONDS = 60;
 const LEADERBOARD_KEY = 'waterWaysLeaderboard';
+const MILESTONES = [10, 20, 30, 40, 50];
+const MILESTONE_MESSAGES = [
+  'First pipe progress! You earned 10 points.',
+  'Halfway there! Your route reached 20 points.',
+  'Three cheers for clean water: 30 points reached!',
+  'Strong route building: 40 points reached!',
+  'Amazing progress: 50 points reached!'
+];
 const WATER_FACTS = [
   'Clean water close to home gives families more time for school, work, and play.',
   'Access to clean water helps communities stay healthy and build a brighter future.',
@@ -20,6 +28,24 @@ const feedbackElement = document.getElementById('feedback');
 const moveButtons = [...document.querySelectorAll('[data-move]')];
 let game;
 let timerInterval;
+
+function playEffect(effectId) {
+  const effect = document.getElementById(effectId);
+  if (!effect) return;
+  effect.currentTime = 0;
+  effect.play().catch(() => {});
+}
+
+function showMilestone() {
+  const milestoneIndex = MILESTONES.findIndex((points, index) =>
+    game.score >= points && !game.reachedMilestones.includes(index)
+  );
+  if (milestoneIndex === -1) return;
+
+  game.reachedMilestones.push(milestoneIndex);
+  setFeedback(MILESTONE_MESSAGES[milestoneIndex], 'good');
+  playEffect('win-sound');
+}
 
 function startGameMusic(mode) {
   stopGameMusic();
@@ -99,6 +125,7 @@ function createGame(mode) {
     mode,
     elapsedSeconds: 0,
     lastMove: null,
+    reachedMilestones: [],
     active: true
   };
 }
@@ -278,6 +305,7 @@ function placePipe(move) {
   if (game.terrain[nextIndex] === 'rock') {
     const pointsLost = Math.min(game.score, POINTS_PER_OBSTACLE_HIT);
     game.score -= pointsLost;
+    playEffect('miss-sound');
     setFeedback(
       pointsLost
         ? `Rock ahead. No pipe was used, but you lost ${pointsLost} points.`
@@ -315,9 +343,14 @@ function placePipe(move) {
   }
 
   const newDistance = shortestSourceDistance(nextRow, nextColumn);
+  playEffect('pipe-sound');
   if (newDistance < oldDistance) {
     game.score += POINTS_PER_CLOSER_MOVE;
-    setFeedback(`Good move. You are closer to clean water: +${POINTS_PER_CLOSER_MOVE} points.${game.mode === 'standard' ? ' Keep following that direction toward the cleaner water.' : ''}`, 'good');
+    const milestoneBefore = game.reachedMilestones.length;
+    showMilestone();
+    if (game.reachedMilestones.length === milestoneBefore) {
+      setFeedback(`Good move. You are closer to clean water: +${POINTS_PER_CLOSER_MOVE} points.${game.mode === 'standard' ? ' Keep following that direction toward the cleaner water.' : ''}`, 'good');
+    }
   } else if (game.mode === 'standard') {
     setFeedback(`That move did not shorten the route. Check the highlighted row and try a different bend; no route points were added (${game.position.column < game.sourceIndices[0] % COLUMNS ? 'move right' : 'move left'} toward the nearest source).`, 'warning');
   } else {
@@ -336,6 +369,7 @@ function undoMove() {
   game.heading = previous.heading;
   game.score = previous.score;
   game.pipes = previous.pipes;
+  game.reachedMilestones = game.reachedMilestones.filter(index => game.score >= MILESTONES[index]);
   setFeedback('Last pipe removed. Your pipe and score counts are restored.');
   renderBoard();
 }
@@ -470,7 +504,11 @@ function startGame(mode = selectedMode()) {
   }, 1000);
 }
 
-document.getElementById('start-game').addEventListener('click', startGame);
+document.getElementById('start-game').addEventListener('click', () => {
+  playEffect('click-sound');
+  startGame();
+});
+moveButtons.forEach(button => button.addEventListener('click', () => playEffect('click-sound')));
 document.getElementById('play-again').addEventListener('click', () => startGame(game.mode));
 document.getElementById('reset-game').addEventListener('click', () => {
   if (window.confirm('Restart this game? Your current route and score will be lost.')) {
