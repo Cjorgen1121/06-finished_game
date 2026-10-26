@@ -155,6 +155,13 @@ h1 {
 .button:disabled, .pipe-button:disabled { opacity: 0.45; cursor: not-allowed; }
 .start-note { margin: 12px 0 0; color: var(--muted); font-size: 0.82rem; }
 .start-actions { display: flex; gap: 10px; }
+.scoring-guide { margin-top: 30px; padding: 18px; border: 1px solid var(--line); background: white; }
+.scoring-guide h2 { margin-bottom: 14px; font-size: 1rem; }
+.scoring-guide-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.scoring-guide-grid div { min-height: 112px; padding: 12px; border-left: 3px solid var(--blue); background: var(--sky); }
+.scoring-guide-grid strong { display: block; margin-bottom: 5px; font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; }
+.scoring-guide-grid span { color: #42575d; font-size: 0.78rem; line-height: 1.35; }
+.scoring-guide > p { margin: 12px 0 0; color: var(--muted); font-size: 0.78rem; }
 .leaderboards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .leaderboard { margin-top: 30px; border-top: 1px solid var(--line); }
 .leaderboard-heading { display: flex; align-items: center; justify-content: space-between; padding-top: 18px; }
@@ -166,7 +173,7 @@ h1 {
 .leaderboard-list strong, .leaderboard-list small { text-align: right; }
 .leaderboard-list small { color: var(--muted); }
 .leaderboard-list .rank { color: var(--blue-deep); font-weight: 700; }
-.leaderboard-empty { grid-column: 1 / -1; color: var(--muted) !important; }
+.leaderboard-empty { min-height: 170px !important; display: grid !important; grid-template-columns: 1fr !important; place-items: center; color: var(--muted) !important; text-align: center; font-size: 0.88rem; }
 .pipe-demo { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; padding: 20px; background: rgb(26 26 26 / 55%); }
 .pipe-demo[hidden] { display: none; }
 .pipe-demo-card { position: relative; width: min(100%, 520px); padding: 28px; border: 1px solid var(--line); border-radius: 8px; background: white; }
@@ -406,6 +413,7 @@ h1 {
   .edition-label { max-width: 120px; text-align: right; font-size: 0.72rem; }
   .screen { padding: 32px 0; }
   .start-actions, .leaderboards { flex-direction: column; display: flex; }
+  .scoring-guide-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .demo-pipes { grid-template-columns: 1fr; }
   .play-area { display: flex; flex-direction: column-reverse; gap: 16px; }
   .controls { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }

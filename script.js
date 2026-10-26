@@ -392,7 +392,7 @@ function renderLeaderboard(mode) {
   const leaderboard = getLeaderboard(mode).slice(0, 5);
   const list = document.getElementById(`${mode}-leaderboard-list`);
   if (!leaderboard.length) {
-    list.innerHTML = '<li class="leaderboard-empty">Complete a game to set the first score.</li>';
+    list.innerHTML = '<li class="leaderboard-empty"><span>No scores yet</span></li>';
     return;
   }
   list.innerHTML = leaderboard.map((entry, index) =>

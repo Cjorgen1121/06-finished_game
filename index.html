@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
   <title>Water Ways | Clean water puzzle</title>
-  <link href="styles.css" rel="stylesheet" type="text/css">
+  <link href="styles.css?v=20261026-2201" rel="stylesheet" type="text/css">
 </head>
 <body>
   <main class="app-shell">
@@ -46,6 +46,17 @@
         <button id="open-pipe-demo" class="button button-secondary" type="button">Pipe demo</button>
       </div>
       <p id="start-note" class="start-note">10 rows · 5 columns · 12 pipes</p>
+
+      <section class="scoring-guide" aria-labelledby="scoring-guide-title">
+        <h2 id="scoring-guide-title">How scoring works</h2>
+        <div class="scoring-guide-grid">
+          <div><strong>+10</strong><span>Each move that brings your pipe closer to clean water</span></div>
+          <div><strong>−10</strong><span>Each rock hit</span></div>
+          <div><strong>+5</strong><span>For every full 10 seconds left after Standard mode</span></div>
+          <div><strong>+10</strong><span>For each unused pipe; Challenge bonuses are doubled</span></div>
+        </div>
+        <p>Challenge mode doubles time and unused-pipe bonuses and starts with only 60 seconds.</p>
+      </section>
 
       <div class="leaderboards">
         <section class="leaderboard" aria-labelledby="standard-leaderboard-title">
@@ -100,7 +111,7 @@
           <button class="pipe-button" type="button" data-move="right"><span class="pipe-icon pipe-right" aria-hidden="true"></span>Right bend</button>
           <button class="pipe-button" type="button" data-move="horizontal"><span class="pipe-icon pipe-horizontal" aria-hidden="true"></span>Horizontal</button>
           <button id="undo" class="button button-secondary undo-button" type="button" disabled><span aria-hidden="true">↶</span> Undo</button>
-          <p class="control-hint">Avoid rocks: hitting one costs points. Horizontal moves toward the nearer source.</p>
+          <p class="control-hint">Avoid rocks: hitting one costs points. Undo cannot restore points already lost from rocks or obstacles. Horizontal moves toward the nearer source.</p>
         </aside>
 
         <div class="board-wrap">
@@ -152,6 +163,6 @@
     <audio id="win-sound" preload="auto" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c7443c.mp3?filename=water-win.mp3"></audio>
     <footer class="site-footer"><span>Water Ways</span><span>Clean water changes everything.</span></footer>
   </main>
-  <script src="script.js"></script>
+  <script src="script.js?v=20261026-2201"></script>
 </body>
 </html>
