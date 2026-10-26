@@ -3,6 +3,9 @@ const COLUMNS = 5;
 const PIPES_BY_MODE = { standard: 12, challenge: 8 };
 const POINTS_PER_CLOSER_MOVE = 10;
 const POINTS_PER_OBSTACLE_HIT = 10;
+const NORMAL_SECONDS = 90;
+const CHALLENGE_SECONDS = 60;
+const LEADERBOARD_KEY = 'waterWaysLeaderboard';
 const WATER_FACTS = [
   'Clean water close to home gives families more time for school, work, and play.',
   'Access to clean water helps communities stay healthy and build a brighter future.',
@@ -17,6 +20,33 @@ const feedbackElement = document.getElementById('feedback');
 const moveButtons = [...document.querySelectorAll('[data-move]')];
 let game;
 let timerInterval;
+
+function startGameMusic(mode) {
+  stopGameMusic();
+  const selectedMusic = document.getElementById(mode === 'challenge'
+    ? 'challenge-game-music'
+    : 'normal-game-music');
+  selectedMusic.play().catch(() => {});
+}
+
+function stopGameMusic() {
+  ['normal-game-music', 'challenge-game-music', 'victory-music', 'loss-music', 'leaderboard-music', 'top-five-sound'].forEach(id => {
+    const sound = document.getElementById(id);
+    sound.pause();
+    sound.currentTime = 0;
+  });
+}
+
+function playScreenMusic(id, loop = false) {
+  stopGameMusic();
+  const sound = document.getElementById(id);
+  sound.loop = loop;
+  sound.play().catch(() => {});
+}
+
+function startLeaderboardMusic() {
+  playScreenMusic('leaderboard-music', true);
+}
 
 function randomItem(items) {
   return items[Math.floor(Math.random() * items.length)];
@@ -158,6 +188,8 @@ function pipeSegmentClass(index, path) {
 
 function renderBoard() {
   gridElement.innerHTML = '';
+  const inletPosition = ((game.startIndex % COLUMNS) + 0.5) * (100 / COLUMNS);
+  document.querySelector('.village-inlet').style.setProperty('--inlet-position', `${inletPosition}%`);
   const currentIndex = cellIndex(game.position.row, game.position.column);
   const pathSet = new Set(game.path);
   const visible = visibleCells();
@@ -285,7 +317,9 @@ function placePipe(move) {
   const newDistance = shortestSourceDistance(nextRow, nextColumn);
   if (newDistance < oldDistance) {
     game.score += POINTS_PER_CLOSER_MOVE;
-    setFeedback(`Good move. You are closer to clean water: +${POINTS_PER_CLOSER_MOVE} points.`, 'good');
+    setFeedback(`Good move. You are closer to clean water: +${POINTS_PER_CLOSER_MOVE} points.${game.mode === 'standard' ? ' Keep following that direction toward the cleaner water.' : ''}`, 'good');
+  } else if (game.mode === 'standard') {
+    setFeedback(`That move did not shorten the route. Check the highlighted row and try a different bend; no route points were added (${game.position.column < game.sourceIndices[0] % COLUMNS ? 'move right' : 'move left'} toward the nearest source).`, 'warning');
   } else {
     setFeedback('Pipe placed. Your score stays the same because this move did not get closer.');
   }
@@ -306,19 +340,76 @@ function undoMove() {
   renderBoard();
 }
 
+function getLeaderboard(mode) {
+  try {
+    return JSON.parse(localStorage.getItem(`${LEADERBOARD_KEY}-${mode}`)) || [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return minutes ? `${minutes}:${String(remainingSeconds).padStart(2, '0')}` : `${seconds} sec`;
+}
+
+function renderLeaderboard(mode) {
+  const leaderboard = getLeaderboard(mode).slice(0, 5);
+  const list = document.getElementById(`${mode}-leaderboard-list`);
+  if (!leaderboard.length) {
+    list.innerHTML = '<li class="leaderboard-empty">Complete a game to set the first score.</li>';
+    return;
+  }
+  list.innerHTML = leaderboard.map((entry, index) =>
+    `<li><span class="rank">${index + 1}</span><strong>${entry.score}</strong><span>${mode}</span><small>${formatTime(entry.time)}</small></li>`
+  ).join('');
+}
+
 function finishGame(won) {
   game.active = false;
   clearInterval(timerInterval);
+  stopGameMusic();
+  if (!won) playScreenMusic('loss-music');
   if (won) showConfetti();
   else clearConfetti();
+
+  const multiplier = game.mode === 'challenge' ? 2 : 1;
+  const gameSeconds = game.mode === 'challenge' ? CHALLENGE_SECONDS : NORMAL_SECONDS;
+  const remainingSeconds = Math.max(0, gameSeconds - game.elapsedSeconds);
+  const timeBonus = won ? Math.floor(remainingSeconds / 10) * 5 * multiplier : 0;
+  const pipesBonus = won ? game.pipes * 10 * multiplier : 0;
+  const finalScore = won ? game.score + timeBonus + pipesBonus : game.score;
+
   document.getElementById('result-title').textContent = won ? 'Congratulations!' : 'Try again!';
   document.getElementById('result-mark').textContent = won ? '✓' : '↻';
   document.getElementById('result-mark').classList.toggle('result-mark-loss', !won);
   document.getElementById('result-message').textContent = won
     ? 'You have brought clean water to the village!'
     : 'Try again to supply the village with clean water.';
-  document.getElementById('final-score').textContent = game.score;
+  document.getElementById('final-score').textContent = finalScore;
+  document.getElementById('route-score').textContent = game.score;
+  document.getElementById('time-score').textContent = timeBonus;
+  document.getElementById('pipes-score').textContent = pipesBonus;
   document.getElementById('water-fact').textContent = randomItem(WATER_FACTS);
+
+  let place = 0;
+  if (won) {
+    const leaderboard = getLeaderboard(game.mode);
+    const newEntry = { score: finalScore, time: game.elapsedSeconds, mode: game.mode };
+    leaderboard.push(newEntry);
+    leaderboard.sort((first, second) => second.score - first.score || first.time - second.time);
+    place = leaderboard.indexOf(newEntry) + 1;
+    localStorage.setItem(`${LEADERBOARD_KEY}-${game.mode}`, JSON.stringify(leaderboard.slice(0, 5)));
+    renderLeaderboard(game.mode);
+  }
+  const rankMessage = document.getElementById('leaderboard-place');
+  rankMessage.textContent = place ? `Leaderboard place: #${place}` : 'Finish the route to join the leaderboard.';
+  if (place > 0 && place <= 5) {
+    playScreenMusic('top-five-sound');
+  } else if (won) {
+    playScreenMusic('victory-music');
+  }
   gameScreen.hidden = true;
   endScreen.hidden = false;
 }
@@ -364,10 +455,18 @@ function startGame(mode = selectedMode()) {
   gameScreen.hidden = false;
   setFeedback('Choose a direction to extend the starting pipe.');
   renderBoard();
+  const gameSeconds = game.mode === 'challenge' ? CHALLENGE_SECONDS : NORMAL_SECONDS;
+  document.getElementById('timer').textContent = gameSeconds;
+  document.getElementById('timer').classList.remove('timer-warning');
+  startGameMusic(game.mode);
   timerInterval = setInterval(() => {
     if (!game.active) return;
     game.elapsedSeconds += 1;
-    document.getElementById('timer').textContent = game.elapsedSeconds;
+    const timeShown = Math.max(0, gameSeconds - game.elapsedSeconds);
+    const timerElement = document.getElementById('timer');
+    timerElement.textContent = timeShown;
+    timerElement.classList.toggle('timer-warning', timeShown <= gameSeconds / 2);
+    if (game.elapsedSeconds >= gameSeconds) finishGame(false);
   }, 1000);
 }
 
@@ -382,10 +481,18 @@ document.querySelectorAll('[name="game-mode"]').forEach(input => {
   input.addEventListener('change', updateModeNote);
 });
 document.getElementById('undo').addEventListener('click', undoMove);
+document.getElementById('open-pipe-demo').addEventListener('click', () => { document.getElementById('pipe-demo').hidden = false; });
+document.getElementById('close-pipe-demo').addEventListener('click', () => { document.getElementById('pipe-demo').hidden = true; });
+document.getElementById('demo-got-it').addEventListener('click', () => { document.getElementById('pipe-demo').hidden = true; });
 document.getElementById('quit-game').addEventListener('click', () => {
   clearInterval(timerInterval);
+  stopGameMusic();
   game.active = false;
   gameScreen.hidden = true;
   startScreen.hidden = false;
+  startLeaderboardMusic();
 });
 moveButtons.forEach(button => button.addEventListener('click', () => placePipe(button.dataset.move)));
+renderLeaderboard('standard');
+renderLeaderboard('challenge');
+startLeaderboardMusic();

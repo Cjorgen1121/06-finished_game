@@ -41,8 +41,36 @@
           <span><strong>Challenge</strong><small>8 pipes</small></span>
         </label>
       </fieldset>
-      <button id="start-game" class="button button-primary button-wide" type="button">Start game <span aria-hidden="true">→</span></button>
+      <div class="start-actions">
+        <button id="start-game" class="button button-primary" type="button">Start game <span aria-hidden="true">→</span></button>
+        <button id="open-pipe-demo" class="button button-secondary" type="button">Pipe demo</button>
+      </div>
       <p id="start-note" class="start-note">10 rows · 5 columns · 12 pipes</p>
+
+      <div class="leaderboards">
+        <section class="leaderboard" aria-labelledby="standard-leaderboard-title">
+          <div class="leaderboard-heading"><h2 id="standard-leaderboard-title">Standard leaderboard</h2><span>Top 5</span></div>
+          <ol id="standard-leaderboard-list" class="leaderboard-list"></ol>
+        </section>
+        <section class="leaderboard" aria-labelledby="challenge-leaderboard-title">
+          <div class="leaderboard-heading"><h2 id="challenge-leaderboard-title">Challenge leaderboard</h2><span>Top 5</span></div>
+          <ol id="challenge-leaderboard-list" class="leaderboard-list"></ol>
+        </section>
+      </div>
+    </section>
+
+    <section id="pipe-demo" class="pipe-demo" role="dialog" aria-modal="true" aria-labelledby="pipe-demo-title" hidden>
+      <div class="pipe-demo-card">
+        <button id="close-pipe-demo" class="demo-close" type="button" aria-label="Close pipe demo">×</button>
+        <h2 id="pipe-demo-title">How each pipe turns</h2>
+        <p>The arrows show the direction from your current pipe to the next cell.</p>
+        <div class="demo-pipes">
+          <div><span class="demo-pipe demo-straight" aria-hidden="true">↑</span><strong>Straight</strong><small>Keep going forward</small></div>
+          <div><span class="demo-pipe demo-left" aria-hidden="true">↰</span><strong>Left bend</strong><small>Turn left from your heading</small></div>
+          <div><span class="demo-pipe demo-right" aria-hidden="true">↱</span><strong>Right bend</strong><small>Turn right from your heading</small></div>
+        </div>
+        <button id="demo-got-it" class="button button-primary" type="button">Got it</button>
+      </div>
     </section>
 
     <section id="game-screen" class="screen game-screen" aria-label="Water Ways game" hidden>
@@ -76,6 +104,11 @@
         </aside>
 
         <div class="board-wrap">
+          <h2 class="project-title">charity: water village project</h2>
+          <div class="village-inlet" aria-label="Pipe coming from the village">
+            <span class="village-label">Village pipe</span>
+            <span class="inlet-pipe" aria-hidden="true"></span>
+          </div>
           <div id="game-grid" class="game-grid" role="grid" aria-label="10 row by 5 column route map"></div>
           <div class="map-legend" aria-label="Map legend">
             <span><b class="legend-pipe">│</b> Starting pipe</span>
@@ -93,7 +126,13 @@
       <div id="result-mark" class="result-mark" aria-hidden="true">✓</div>
       <h1 id="result-title">You did it!</h1>
       <p id="result-message" class="lead">Clean water reached the village.</p>
-      <div class="final-score"><span>Score</span><strong id="final-score">0</strong></div>
+      <div class="final-score"><span>Final score</span><strong id="final-score">0</strong></div>
+      <p id="leaderboard-place" class="leaderboard-place"></p>
+      <div class="score-breakdown" aria-label="Final score breakdown">
+        <div><span>Route points</span><strong id="route-score">0</strong></div>
+        <div><span>Time bonus</span><strong id="time-score">0</strong></div>
+        <div><span>Pipes bonus</span><strong id="pipes-score">0</strong></div>
+      </div>
       <p id="water-fact" class="water-fact"></p>
       <div class="end-actions">
         <button id="play-again" class="button button-primary" type="button">Play again</button>
@@ -101,6 +140,12 @@
       </div>
     </section>
 
+    <audio id="normal-game-music" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2f6e0dcf2c.mp3?filename=calm-background-ambient-11322.mp3"></audio>
+    <audio id="challenge-game-music" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_c8c8a73467.mp3?filename=fast-action-percussion-14090.mp3"></audio>
+    <audio id="victory-music" preload="auto" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c7443c.mp3?filename=success-fanfare-trumpets-6185.mp3"></audio>
+    <audio id="loss-music" preload="auto" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3?filename=negative-beeps-6007.mp3"></audio>
+    <audio id="leaderboard-music" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=happy-ukulele-113022.mp3"></audio>
+    <audio id="top-five-sound" preload="auto" src="https://cdn.pixabay.com/download/audio/2021/08/09/audio_4d5d3b8b5b.mp3?filename=epic-cinematic-trailer-112979.mp3"></audio>
     <footer class="site-footer"><span>Water Ways</span><span>Clean water changes everything.</span></footer>
   </main>
   <script src="script.js"></script>
