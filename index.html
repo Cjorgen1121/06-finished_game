@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Water Ways | Clean water puzzle</title>
+  <link href="styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="site-header">
+      <a class="brand" href="#start" aria-label="Water Ways home">
+        <img src="img/cw_logo_horizontal.png" alt="charity: water">
+      </a>
+      <span class="edition-label">A clean water puzzle</span>
+    </header>
+
+    <section id="start-screen" class="screen start-screen" aria-labelledby="game-title">
+      <div class="intro-copy">
+        <p class="eyebrow">Every turn brings water closer</p>
+        <h1 id="game-title">Water Ways</h1>
+        <p class="lead">Build a pipe line from the village pump to clean water. Read the map, avoid the hazards, and make every pipe count.</p>
+      </div>
+      <div class="how-to">
+        <h2>How to play</h2>
+        <ol>
+          <li><span class="step-number">01</span><span>Choose a pipe direction to extend your line.</span></li>
+          <li><span class="step-number">02</span><span>The two rows above you reveal hazards; spaces you have visited stay visible.</span></li>
+          <li><span class="step-number">03</span><span>Reach either clean water source before you run out of pipes.</span></li>
+        </ol>
+      </div>
+      <fieldset class="mode-picker">
+        <legend>Choose a mode</legend>
+        <label class="mode-option">
+          <input type="radio" name="game-mode" value="standard" checked>
+          <span><strong>Standard</strong><small>12 pipes</small></span>
+        </label>
+        <label class="mode-option">
+          <input type="radio" name="game-mode" value="challenge">
+          <span><strong>Challenge</strong><small>8 pipes</small></span>
+        </label>
+      </fieldset>
+      <button id="start-game" class="button button-primary button-wide" type="button">Start game <span aria-hidden="true">→</span></button>
+      <p id="start-note" class="start-note">10 rows · 5 columns · 12 pipes</p>
+    </section>
+
+    <section id="game-screen" class="screen game-screen" aria-label="Water Ways game" hidden>
+      <div class="game-heading">
+        <div>
+          <p class="eyebrow">Find the clean water</p>
+          <h1>Build your route</h1>
+        </div>
+        <div class="game-actions">
+          <button id="reset-game" class="text-button" type="button">Restart game</button>
+          <button id="quit-game" class="text-button" type="button">Exit game</button>
+        </div>
+      </div>
+
+      <div class="stats" aria-label="Game status">
+        <div class="stat"><span class="stat-label">Score</span><strong id="score">0</strong></div>
+        <div class="stat"><span class="stat-label">Pipes</span><strong id="pipes-left">12</strong></div>
+        <div class="stat"><span class="stat-label">Elapsed</span><strong><span id="timer">0</span><span class="seconds"> sec</span></strong></div>
+      </div>
+      <p id="feedback" class="feedback" role="status" aria-live="polite">Choose a direction to extend the starting pipe.</p>
+
+      <div class="play-area">
+        <aside class="controls" aria-label="Pipe controls">
+          <p class="control-title">Place a pipe</p>
+          <button class="pipe-button" type="button" data-move="straight"><span class="pipe-icon pipe-straight" aria-hidden="true"></span>Straight</button>
+          <button class="pipe-button" type="button" data-move="left"><span class="pipe-icon pipe-left" aria-hidden="true"></span>Left bend</button>
+          <button class="pipe-button" type="button" data-move="right"><span class="pipe-icon pipe-right" aria-hidden="true"></span>Right bend</button>
+          <button class="pipe-button" type="button" data-move="horizontal"><span class="pipe-icon pipe-horizontal" aria-hidden="true"></span>Horizontal</button>
+          <button id="undo" class="button button-secondary undo-button" type="button" disabled><span aria-hidden="true">↶</span> Undo</button>
+          <p class="control-hint">Avoid rocks: hitting one costs points. Horizontal moves toward the nearer source.</p>
+        </aside>
+
+        <div class="board-wrap">
+          <div id="game-grid" class="game-grid" role="grid" aria-label="10 row by 5 column route map"></div>
+          <div class="map-legend" aria-label="Map legend">
+            <span><b class="legend-pipe">│</b> Starting pipe</span>
+            <span><b class="legend-rock">R</b> Rock</span>
+            <span><b class="legend-dirty">D</b> Dirty water</span>
+            <span><b class="legend-clean">W</b> Clean water</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="end-screen" class="screen end-screen" aria-labelledby="result-title" aria-live="polite" hidden>
+      <div id="confetti" class="confetti" aria-hidden="true" hidden></div>
+      <p class="eyebrow">Water Ways</p>
+      <div id="result-mark" class="result-mark" aria-hidden="true">✓</div>
+      <h1 id="result-title">You did it!</h1>
+      <p id="result-message" class="lead">Clean water reached the village.</p>
+      <div class="final-score"><span>Score</span><strong id="final-score">0</strong></div>
+      <p id="water-fact" class="water-fact"></p>
+      <div class="end-actions">
+        <button id="play-again" class="button button-primary" type="button">Play again</button>
+        <a class="button button-secondary" href="https://www.charitywater.org/" target="_blank" rel="noreferrer">Learn more <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
+    <footer class="site-footer"><span>Water Ways</span><span>Clean water changes everything.</span></footer>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
