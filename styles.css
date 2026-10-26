@@ -259,17 +259,60 @@ h1 {
 .board-wrap { min-width: 0; }
 
 .project-title {
+  position: relative;
+  z-index: 2;
+  min-height: 62px;
   margin: 0 0 8px;
-  color: #245d77;
+  padding: 24px 12px 7px;
+  border: 0;
+  border-radius: 3px;
+  color: var(--blue-deep);
   font-size: clamp(1rem, 2.5vw, 1.3rem);
+  line-height: 1.2;
   text-align: center;
   text-transform: lowercase;
+  box-shadow: none;
+  text-shadow: 0 2px 0 white;
+}
+.project-title::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 50%;
+  width: min(88%, 390px);
+  height: 36px;
+  transform: translateX(-50%);
+  border-radius: 180px 180px 0 0;
+  background:
+    radial-gradient(ellipse at 50% 100%, transparent 0 48%, white 49% 54%, transparent 55%),
+    radial-gradient(ellipse at 50% 100%, #075e9c 0 58%, transparent 59%),
+    radial-gradient(ellipse at 50% 100%, #ffc907 0 66%, transparent 67%),
+    radial-gradient(ellipse at 50% 100%, #2e9df7 0 74%, transparent 75%),
+    radial-gradient(ellipse at 50% 100%, #0877bd 0 82%, transparent 83%);
+  opacity: 0.95;
 }
 .village-inlet {
   position: relative;
   width: min(100%, 470px);
-  height: 58px;
+  height: 76px;
   margin: 0 auto -1px;
+  background:
+    linear-gradient(150deg, transparent 0 46%, rgb(255 201 7 / 32%) 47% 54%, transparent 55%) 8px 31px / 55px 42px no-repeat,
+    linear-gradient(150deg, transparent 0 46%, rgb(46 157 247 / 28%) 47% 54%, transparent 55%) calc(100% - 63px) 31px / 55px 42px no-repeat,
+    linear-gradient(180deg, transparent 0 56%, #9aab82 57%);
+}
+.village-inlet::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 46px;
+  height: 11px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #647b72;
+  box-shadow: 0 -3px 0 #80978e;
 }
 .village-label {
   position: absolute;
@@ -284,16 +327,16 @@ h1 {
 }
 .inlet-pipe {
   position: absolute;
-  bottom: 0;
+  bottom: 5px;
   left: var(--inlet-position, 50%);
   width: 18px;
-  height: 42px;
+  height: 38px;
   transform: translateX(-50%);
   border: 3px solid #075e9c;
   border-top: 0;
   border-radius: 0 0 7px 7px;
-  background: linear-gradient(90deg, #0877bd 0 18%, #7ed2ff 36%, #ffffff 46%, #2e9df7 62%, #075e9c 100%);
-  box-shadow: 4px 0 5px rgb(8 119 189 / 18%);
+  background: linear-gradient(90deg, #0877bd 0 18%, #7ed2ff 36%, #ffffff 46%, var(--blue) 62%, #075e9c 100%);
+  box-shadow: 4px 0 5px rgb(8 119 189 / 18%), inset 0 -3px var(--yellow);
 }
 .inlet-pipe::before {
   content: '';
@@ -304,20 +347,38 @@ h1 {
   height: 7px;
   border: 2px solid #075e9c;
   border-radius: 3px;
-  background: linear-gradient(180deg, #8fdcff, #0877bd);
+  background: linear-gradient(180deg, var(--yellow) 0 24%, var(--blue) 25% 70%, #075e9c 100%);
+  box-shadow: 0 3px 0 var(--yellow);
+}
+.inlet-pipe::after {
+  content: '';
+  position: absolute;
+  left: -11px;
+  bottom: -11px;
+  width: 34px;
+  height: 14px;
+  border: 3px solid #075e9c;
+  border-radius: 50% 50% 4px 4px;
+  background: var(--yellow);
+  box-shadow: inset 0 4px #fff;
 }
 
 .game-grid {
   width: min(100%, 470px);
   margin: 0 auto;
   padding: 5px;
-  border: 1px solid #b7c7c5;
+  border: 8px solid #80978e;
+  border-top-color: #647b72;
+  border-left-color: #71877e;
   border-radius: 5px;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   grid-auto-rows: clamp(30px, 4.4vw, 43px);
   gap: 3px;
-  background: #dce6e3;
+  background-color: #9aab82;
+  background-image: radial-gradient(#7d9270 1px, transparent 1px), linear-gradient(rgb(255 255 255 / 8%) 1px, transparent 1px);
+  background-size: 11px 11px, 100% 7px;
+  box-shadow: inset 0 5px 8px rgb(50 67 61 / 45%), inset 0 0 0 3px rgb(71 91 82 / 30%), 0 3px 0 #526860;
 }
 .grid-cell {
   min-width: 0;
@@ -335,25 +396,31 @@ h1 {
 .grid-cell.path-cell { background-color: #cbe8ec; }
 .grid-cell.current-cell { outline: 2px solid var(--blue); outline-offset: -3px; }
 .pipe-segment-vertical {
-  background-image: linear-gradient(var(--blue) 0 0);
+  border-left: 1px solid rgb(4 91 150 / 55%);
+  border-right: 1px solid rgb(255 255 255 / 70%);
+  background-image: linear-gradient(90deg, #0877bd 0 18%, #75cfff 36%, #fff 46%, #2e9df7 62%, #075e9c 100%);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 5px 100%;
+  background-size: 18px 100%;
+  box-shadow: inset 1px 0 rgb(255 255 255 / 35%), 1px 0 rgb(5 94 156 / 20%);
 }
 .pipe-segment-horizontal {
-  background-image: linear-gradient(var(--blue) 0 0);
+  border-top: 1px solid rgb(4 91 150 / 55%);
+  border-bottom: 1px solid rgb(255 255 255 / 70%);
+  background-image: linear-gradient(180deg, #0877bd 0 18%, #75cfff 36%, #fff 46%, #2e9df7 62%, #075e9c 100%);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 100% 5px;
+  background-size: 100% 18px;
+  box-shadow: inset 0 1px rgb(255 255 255 / 35%), 0 1px rgb(5 94 156 / 20%);
 }
 .pipe-segment-down-right, .pipe-segment-down-left, .pipe-segment-up-right, .pipe-segment-up-left {
-  background-image: linear-gradient(var(--blue) 0 0), linear-gradient(var(--blue) 0 0);
+  background-image: linear-gradient(90deg, #0877bd, #75cfff 36%, #fff 46%, #075e9c), linear-gradient(180deg, #0877bd, #75cfff 36%, #fff 46%, #075e9c);
   background-repeat: no-repeat;
 }
-.pipe-segment-down-right { background-position: center bottom, right center; background-size: 5px 55%, 55% 5px; }
-.pipe-segment-down-left { background-position: center bottom, left center; background-size: 5px 55%, 55% 5px; }
-.pipe-segment-up-right { background-position: center top, right center; background-size: 5px 55%, 55% 5px; }
-.pipe-segment-up-left { background-position: center top, left center; background-size: 5px 55%, 55% 5px; }
+.pipe-segment-down-right { background-position: center bottom, right center; background-size: 18px 55%, 55% 18px; }
+.pipe-segment-down-left { background-position: center bottom, left center; background-size: 18px 55%, 55% 18px; }
+.pipe-segment-up-right { background-position: center top, right center; background-size: 18px 55%, 55% 18px; }
+.pipe-segment-up-left { background-position: center top, left center; background-size: 18px 55%, 55% 18px; }
 .grid-cell.rock-cell { border-color: #9a9a9a; color: #1a1a1a; background: #d0d0d0; }
 .grid-cell.dirty-cell { border-color: #000; color: #fff; background: #111; }
 .grid-cell.clean-cell { border-color: var(--blue-deep); color: var(--blue-deep); background: var(--yellow); }
